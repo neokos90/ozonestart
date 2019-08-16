@@ -95,11 +95,6 @@ function actionPage() {
 
     const cards = document.querySelectorAll('.goods .card'),
         discountCheckbox = document.getElementById('discount-checkbox'),
-        // для того, чтобы использовать card.parentNode.style.display = 'none';  вместо 
-        // card.parentNode.remove(); и goods.appendChild(card.parentNode); нужно объявить goods
-        // и прописать card.parentNode.remove(); и goods.appendChild(card.parentNode);
-        // как показано ниже
-        // goods = document.querySelector('.goods'),
         min = document.getElementById('min'),
         max = document.getElementById('max'),
         search = document.querySelector('.search-wrapper_input'),
@@ -107,61 +102,30 @@ function actionPage() {
 
 
     //фильтр по акции
-    discountCheckbox.addEventListener('click', () => {
-        cards.forEach((card) => {
-            if (discountCheckbox.checked) {
-                if (!card.querySelector('.card-sale')) {
-                    card.parentNode.style.display = 'none';
-                    // card.parentNode.remove();
-                }
-            } else {
-                const cardPrice = card.querySelector('.card-price'),
-                    price = parseFloat(cardPrice.textContent);
-                if ((min.value && price < min.value) || (max.value && price > max.value)) {
-                    card.parentNode.style.display = 'none';
-                    // card.parentNode.remove();
-                } else {
-                    card.parentNode.style.display = '';
-                }
-                // goods.appendChild(card.parentNode);    
-            }
-        });
-    });
+    discountCheckbox.addEventListener('click', filter);
 
 
 
     //фильтр по цене
-    min.addEventListener('change', filterPrice);
-    max.addEventListener('change', filterPrice);
+    min.addEventListener('change', filter);
+    max.addEventListener('change', filter);
 
-    function filterPrice() {
+
+    // Функция, объединяющая фильтр по цене и по акции
+    function filter(){
         cards.forEach((card) => {
-            if (discountCheckbox.checked) {
-                if (!card.querySelector('.card-sale')) {
-                    card.parentNode.style.display = 'none';
-                } else {
-                    const cardPrice = card.querySelector('.card-price'),
-                        price = parseFloat(cardPrice.textContent);
+            const cardPrice = card.querySelector('.card-price'),
+            price = parseFloat(cardPrice.textContent),
+            discount = card.querySelector('.card-sale');
 
-                    if ((min.value && price < min.value) || (max.value && price > max.value)) {
-                        card.parentNode.style.display = 'none';
-                    } else {
-                        card.parentNode.style.display = '';
-                    }
-                }
+            if ((min.value && price < min.value) || (max.value && price > max.value)){
+                card.parentNode.style.display = 'none';                
+            } else if(discountCheckbox.checked && !discount){
+                card.parentNode.style.display = 'none';
             } else {
-                const cardPrice = card.querySelector('.card-price'),
-                    price = parseFloat(cardPrice.textContent);
-
-                if ((min.value && price < min.value) || (max.value && price > max.value)) {
-                    card.parentNode.style.display = 'none';
-                } else {
-                    card.parentNode.style.display = '';
-                }
+                card.parentNode.style.display = '';
             }
-
         });
-
     }
 
     //поиск
@@ -180,6 +144,15 @@ function actionPage() {
     });
 }
 
+// Получение данных с сервера
+
+function getData(){
+
+}
+// end получение данных с сервера
+
+
+getData();
 toggleCheckbox();
 toggleCart();
 addCart();
