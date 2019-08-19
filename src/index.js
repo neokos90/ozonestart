@@ -134,6 +134,7 @@ function actionPage() {
         cards.forEach((card) => {
             const title = card.querySelector('.card-title');
             if (!searchText.test(title.textContent)) {
+            
                 card.parentNode.style.display = 'none';
             } else {
                 card.parentNode.style.display = '';
@@ -147,6 +148,45 @@ function actionPage() {
 // Получение данных с сервера
 
 function getData(){
+    const goodsWrapper = document.querySelector('.goods');
+    fetch('../db/db.json')
+        .then((response) => {
+            if(response.ok){
+                return response.json();
+            } else {
+                throw new Error('Данные не были получены, ошибка: ' + response.status);
+            }           
+
+        })
+        .then(data => renderCards(data))
+        .catch((err) => {
+            console.warn(err);
+            goodsWrapper.innerHTML = '<div style="color:red; font-size: 30px">Упс, что-то пошло не так!</div>';
+        });    
+}
+// Вывод карточет товара
+function renderCards(data){
+    const goodsWrapper = document.querySelector('.goods');
+    data.goods.forEach(() => {
+        const card = document.createElement('div');
+        card.className = 'col-12 col-md-6 col-lg-4 col-xl-3';
+        card.innerHTML = `
+                <div class="card">
+                    <div class="card-sale">🔥Hot Sale🔥</div>
+                    <div class="card-img-wrapper">
+                        <span class="card-img-top"
+                            style="background-image: url('https://cdn1.ozone.ru/multimedia/c400/1027495663.jpg')"></span>
+                    </div>
+                    <div class="card-body justify-content-between">
+                        <div class="card-price">16499 ₽</div>
+                        <h5 class="card-title">Игровая приставка Sony PlayStation 3 Super Slim</h5>
+                        <button class="btn btn-primary">В корзину</button>
+                    </div>
+                </div>
+    `;
+     goodsWrapper.appendChild(card);   
+
+    });
 
 }
 // end получение данных с сервера
